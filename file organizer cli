@@ -1,0 +1,56 @@
+from pathlib import Path
+n=True
+while n:
+    dry_run=input("Do you want to dry run or the real deal. type y if dry run or n if real deal")
+    if dry_run=="y" or dry_run=="n":
+        n=False
+    else:
+        n=True
+recursive=True
+while recursive:
+    recursive_run=input("Do you want to recursive run or the normal run. type y if recursive run or n if normal run")
+    if recursive_run=="y" or recursive_run=="n":
+        recursive=False
+    else:
+        recursive=True        
+while True:
+    p=input("Enter the path of the directory you want organized: ")
+    dirpath=Path(p)
+    if dirpath.is_dir():
+        break
+    else:
+        continue
+dir_of_ext={   
+    "Images": ["*.jpg", "*.png", "*.jpeg"],
+    "Videos": ["*.mp4", "*.mkv"],
+    "Documents": ["*.pdf", "*.docx", "*.txt"],
+    "Archives": ["*.zip", "*.rar"]
+    
+}
+for category in dir_of_ext:
+    (dirpath/category).mkdir(exist_ok=True)
+for category, patterns in dir_of_ext.items():
+    dest=dirpath/category
+    for pattern in patterns:
+        if recursive==True:
+           files=dirpath.rglob(pattern)
+        elif recursive==False:
+           files=dirpath.glob(pattern)
+        for file in files:
+            if file.is_file():
+                target=dest/file.name
+                count=1
+                while target.exists():
+                    target=dest/f"{file.stem}_{count}{file.suffix}"
+                    count+=1
+                if dry_run=="y":
+                   print(f"{file} is moved to {target}")
+                elif dry_run=="n":
+                   file.replace(target)   
+                
+                
+    
+    
+    
+    
+    
